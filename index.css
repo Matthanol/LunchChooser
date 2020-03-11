@@ -63,6 +63,8 @@ input[type = button]{
     color: aliceblue;
     border-radius: 5px;
     border: solid blue 1px;
+    padding: 5px;
+    margin-left: 5px;
 }
 
 
