@@ -1,0 +1,81 @@
+body{
+    background-color: antiquewhite;
+    margin: 0;
+}
+header{
+    background-color: thistle;
+    display: block;
+    margin: 0;
+    padding-top: 1rem;
+    min-height: 5rem;
+  
+
+}
+
+header h1{
+    font-size: 3rem;
+    color: blue;
+    text-align: center;
+    margin: 0;
+    transform: rotateZ(2deg);
+
+}
+
+
+#optionsContainer{
+    margin: 10px;
+    padding: 10px;
+    padding-top: 0px;
+}
+
+#optionsContainer{
+  display: flex;
+  justify-content: space-evenly ;
+  
+}
+#optionsContainer > div{
+    flex-basis: 50%;
+    text-align: center;
+}
+ul{
+    padding: 0;
+}
+
+li{
+    list-style-type: none;
+    margin: 0.5rem 0 0.5rem 0;
+}
+input{
+    text-align: center;
+}
+
+input[type = text], #optionsLabel{
+    width: 200px;
+    display: inline-block;
+    margin-right: 5px;
+}
+input[type = number]{
+width: 3rem;
+}
+
+input[type = button]{
+    background-color: blue;
+    color: aliceblue;
+    border-radius: 5px;
+    border: solid blue 1px;
+}
+
+
+#outputContainer{
+    text-align: center;
+    font-size: 2rem;
+}
+
+.devider{
+    width: 100%;
+    border-bottom: solid black 1px;
+    margin: 1rem 0 1rem 0;
+}
+.hidden{
+    display: none;
+}
