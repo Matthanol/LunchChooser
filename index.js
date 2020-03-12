@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', onReady);
 let constIndex = 0
 let withVotes = false;
 let options = document.getElementById('input');
-let memory;
+let memory = window.localStorage.getObj('memory');;
 Storage.prototype.setObj = function (key, obj) {
     return this.setItem(key, JSON.stringify(obj))
 }
@@ -38,7 +38,7 @@ function createInputRowWithValue(option) {
     optionField.setAttribute('type', 'text');
     optionField.setAttribute('placeholder', 'Location or food option')
     optionField.value = option
-    
+
 
     const votes = document.createElement('input');
     votes.setAttribute('type', 'number')
@@ -74,7 +74,9 @@ function createInputRow() {
 
 function keyHandler(e) {
     // console.log(e.keyCode)
-    if (e.keyCode === 13 && parseInt(e.target.id) == constIndex) {
+
+    if (e.keyCode === 13 && parseInt(e.target.parentElement.id) == options.children[options.children.length - 1].id) {
+        //  console.log(e.target.parentElement.id  == options.children[options.children.length - 1].id )
         e.target.removeEventListener('keyup', keyHandler, true)
         if (!isLastRowEmpty()) {
             createInputRow()
@@ -133,7 +135,6 @@ function createAnswerAndSpitOut() {
 function generateInMemoryList() {
     const memoryList = document.getElementById('memoryList');
     memoryList.innerHTML = ''
-    memory = window.localStorage.getObj('memory');
     if (!memory) {
         memory = {
             options: []
@@ -159,10 +160,10 @@ function saveOption(option) {
 }
 
 function addToOptionList(e) {
-    
+
     if (!optionListContains(e.target.getAttribute('data-option'))) {
         if (isLastRowEmpty()) {
-            removeOptionRow(options.children[options.children.length -1].id)
+            removeOptionRow(options.children[options.children.length - 1].id)
         }
         createInputRowWithValue(e.target.getAttribute('data-option'))
     }
@@ -212,21 +213,28 @@ function removeOptionRow(id) {
 
 }
 
-function removeOptionRowEventListener(e){
+function removeOptionRowEventListener(e) {
+
     removeOptionRow(e.target.getAttribute('data-id'))
+    if (options.children.length == 0) {
+        createInputRow()
+    }
 }
 
 function isLastRowEmpty() {
     let answer;
-    try{ answer = options.children[options.children.length-1].children[0].value == ''}
-    catch{answer = false}
+    try {
+        answer = options.children[options.children.length - 1].children[0].value == ''
+    } catch {
+        answer = false
+    }
     return answer
 }
 
 function optionListContains(option) {
     for (let i = 0; i < options.children.length; i++) {
         let value = options.children[i].children[0].value
-        console.log(value)
+        //console.log(value)
         if (value == option) {
             return true
         }
