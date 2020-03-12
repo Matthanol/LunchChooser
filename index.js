@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', onReady);
 
 let constIndex = 0
 let withVotes = false;
-let options = []
+let options = document.getElementById('input');
 let memory;
 Storage.prototype.setObj = function (key, obj) {
     return this.setItem(key, JSON.stringify(obj))
@@ -21,7 +21,8 @@ function onReady(e) {
     document.getElementById('choose').addEventListener('click', createAnswerAndSpitOut);
     generateInMemoryList();
     applyVoteSetting()
-    
+    document.getElementById('addRow').addEventListener('click', createInputRow)
+
 
 }
 
@@ -31,12 +32,13 @@ function createInputRowWithValue(option) {
 
     let container = document.createElement("li")
     container.className = 'inputRowContainer'
+    container.id = constIndex
 
     const optionField = document.createElement('input');
     optionField.setAttribute('type', 'text');
     optionField.setAttribute('placeholder', 'Location or food option')
     optionField.value = option
-    optionField.id = constIndex
+    
 
     const votes = document.createElement('input');
     votes.setAttribute('type', 'number')
@@ -47,15 +49,21 @@ function createInputRowWithValue(option) {
         votes.classList.add('hidden')
     }
 
+    const removeButton = document.createElement('input');
+    removeButton.setAttribute('type', 'button')
+    removeButton.setAttribute('data-id', constIndex)
+    removeButton.setAttribute('value', 'X')
+    removeButton.addEventListener('click', removeOptionRowEventListener)
+
 
     container.appendChild(optionField)
 
     container.appendChild(votes);
+    container.appendChild(removeButton)
 
-    document.getElementById('input').appendChild(container);
+    options.appendChild(container);
     container.addEventListener('keyup', keyHandler);
     optionField.focus();
-    options.push(container)
 
 
 }
@@ -96,11 +104,11 @@ function applyVoteSetting() {
 }
 
 function createAnswerAndSpitOut() {
-    if (options.length > 1) {
+    if (options.children.length > 1) {
         let weightedList = [];
-        options.forEach(element => {
-            const optionText = element.childNodes[0].value;
-            const wheight = element.childNodes[1].value
+        Array.from(options.children).forEach(element => {
+            const optionText = element.children[0].value;
+            const wheight = element.children[1].value
             if (optionText.length > 0) {
                 saveOption(optionText);
                 for (let i = 0; i < wheight; i++) {
@@ -133,27 +141,7 @@ function generateInMemoryList() {
         window.localStorage.setObj('memory', memory)
     }
     memory.options.forEach(option => {
-        const memoryItem = document.createElement('li');
-        const memoryText = document.createElement('span');
-        memoryText.innerText = option;
-
-        const memoryAddButton = document.createElement('input')
-        memoryAddButton.setAttribute('type', 'button')
-        memoryAddButton.setAttribute('data-option', option)
-        memoryAddButton.addEventListener('click', addToOptionList)
-        memoryAddButton.value = 'use'
-
-        const memoryRemoveButton = document.createElement('input')
-        memoryRemoveButton.setAttribute('type', 'button')
-        memoryRemoveButton.setAttribute('data-option', option)
-        memoryRemoveButton.addEventListener('click', removeFromMemoryList)
-        memoryRemoveButton.value = 'remove'
-
-        memoryItem.appendChild(memoryText);
-        memoryItem.appendChild(memoryAddButton);
-        memoryItem.appendChild(memoryRemoveButton)
-
-        memoryList.appendChild(memoryItem);
+        addMemoryItem(option);
     })
 
 }
@@ -171,12 +159,40 @@ function saveOption(option) {
 }
 
 function addToOptionList(e) {
-    if (isLastRowEmpty()) {
-        removeOptionRow(constIndex)
+    
+    if (!optionListContains(e.target.getAttribute('data-option'))) {
+        if (isLastRowEmpty()) {
+            removeOptionRow(options.children[options.children.length -1].id)
+        }
+        createInputRowWithValue(e.target.getAttribute('data-option'))
     }
-    createInputRowWithValue(e.target.getAttribute('data-option'))
 
 
+}
+
+function addMemoryItem(option) {
+    const memoryList = document.getElementById('memoryList');
+    const memoryItem = document.createElement('li');
+    const memoryText = document.createElement('span');
+    memoryText.innerText = option;
+
+    const memoryAddButton = document.createElement('input')
+    memoryAddButton.setAttribute('type', 'button')
+    memoryAddButton.setAttribute('data-option', option)
+    memoryAddButton.addEventListener('click', addToOptionList)
+    memoryAddButton.value = 'use'
+
+    const memoryRemoveButton = document.createElement('input')
+    memoryRemoveButton.setAttribute('type', 'button')
+    memoryRemoveButton.setAttribute('data-option', option)
+    memoryRemoveButton.addEventListener('click', removeFromMemoryList)
+    memoryRemoveButton.value = 'remove'
+
+    memoryItem.appendChild(memoryText);
+    memoryItem.appendChild(memoryAddButton);
+    memoryItem.appendChild(memoryRemoveButton)
+
+    memoryList.appendChild(memoryItem);
 }
 
 function removeFromMemoryList(e) {
@@ -191,12 +207,31 @@ function removeFromMemoryList(e) {
     generateInMemoryList()
 }
 
-function removeOptionRow(i) {
-    const elementToRemove = document.getElementById(i).parentElement;
-    elementToRemove.parentElement.removeChild(elementToRemove)
+function removeOptionRow(id) {
+    options.removeChild(document.getElementById(id))
 
 }
 
+function removeOptionRowEventListener(e){
+    removeOptionRow(e.target.getAttribute('data-id'))
+}
+
 function isLastRowEmpty() {
-    return document.getElementById(constIndex).value == ''
+    let answer;
+    try{ answer = options.children[options.children.length-1].children[0].value == ''}
+    catch{answer = false}
+    return answer
+}
+
+function optionListContains(option) {
+    for (let i = 0; i < options.children.length; i++) {
+        let value = options.children[i].children[0].value
+        console.log(value)
+        if (value == option) {
+            return true
+        }
+
+
+    }
+    return false
 }
