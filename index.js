@@ -3,14 +3,14 @@ document.addEventListener('DOMContentLoaded', onReady);
 let constIndex = 0
 let withVotes = false;
 let options = document.getElementById('input');
-let memory = window.localStorage.getObj('memory');;
+
 Storage.prototype.setObj = function (key, obj) {
     return this.setItem(key, JSON.stringify(obj))
 }
 Storage.prototype.getObj = function (key) {
     return JSON.parse(this.getItem(key))
 }
-
+let memory = window.localStorage.getObj('memory');
 
 
 function onReady(e) {
