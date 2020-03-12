@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', onReady);
 
 let constIndex = 0
 let withVotes = false;
-let options = []
+let options = document.getElementById('input');
 let memory;
 Storage.prototype.setObj = function (key, obj) {
     return this.setItem(key, JSON.stringify(obj))
@@ -21,6 +21,7 @@ function onReady(e) {
     document.getElementById('choose').addEventListener('click', createAnswerAndSpitOut);
     generateInMemoryList();
     applyVoteSetting()
+    document.getElementById('addRow').addEventListener('click', createInputRow)
 
 
 }
@@ -31,12 +32,13 @@ function createInputRowWithValue(option) {
 
     let container = document.createElement("li")
     container.className = 'inputRowContainer'
+    container.id = constIndex
 
     const optionField = document.createElement('input');
     optionField.setAttribute('type', 'text');
     optionField.setAttribute('placeholder', 'Location or food option')
     optionField.value = option
-    optionField.id = constIndex
+    
 
     const votes = document.createElement('input');
     votes.setAttribute('type', 'number')
@@ -47,15 +49,21 @@ function createInputRowWithValue(option) {
         votes.classList.add('hidden')
     }
 
+    const removeButton = document.createElement('input');
+    removeButton.setAttribute('type', 'button')
+    removeButton.setAttribute('data-id', constIndex)
+    removeButton.setAttribute('value', 'X')
+    removeButton.addEventListener('click', removeOptionRowEventListener)
+
 
     container.appendChild(optionField)
 
     container.appendChild(votes);
+    container.appendChild(removeButton)
 
-    document.getElementById('input').appendChild(container);
+    options.appendChild(container);
     container.addEventListener('keyup', keyHandler);
     optionField.focus();
-    options.push(container)
 
 
 }
@@ -96,11 +104,11 @@ function applyVoteSetting() {
 }
 
 function createAnswerAndSpitOut() {
-    if (options.length > 1) {
+    if (options.children.length > 1) {
         let weightedList = [];
-        options.forEach(element => {
-            const optionText = element.childNodes[0].value;
-            const wheight = element.childNodes[1].value
+        Array.from(options.children).forEach(element => {
+            const optionText = element.children[0].value;
+            const wheight = element.children[1].value
             if (optionText.length > 0) {
                 saveOption(optionText);
                 for (let i = 0; i < wheight; i++) {
@@ -154,7 +162,7 @@ function addToOptionList(e) {
     
     if (!optionListContains(e.target.getAttribute('data-option'))) {
         if (isLastRowEmpty()) {
-            removeOptionRow(constIndex)
+            removeOptionRow(options.children[options.children.length -1].id)
         }
         createInputRowWithValue(e.target.getAttribute('data-option'))
     }
@@ -199,19 +207,25 @@ function removeFromMemoryList(e) {
     generateInMemoryList()
 }
 
-function removeOptionRow(i) {
-    const elementToRemove = document.getElementById(i).parentElement;
-    elementToRemove.parentElement.removeChild(elementToRemove)
+function removeOptionRow(id) {
+    options.removeChild(document.getElementById(id))
 
+}
+
+function removeOptionRowEventListener(e){
+    removeOptionRow(e.target.getAttribute('data-id'))
 }
 
 function isLastRowEmpty() {
-    return document.getElementById(constIndex).value == ''
+    let answer;
+    try{ answer = options.children[options.children.length-1].children[0].value == ''}
+    catch{answer = false}
+    return answer
 }
 
 function optionListContains(option) {
-    for (let i = 0; i < options.length; i++) {
-        let value = options[i].childNodes[0].value
+    for (let i = 0; i < options.children.length; i++) {
+        let value = options.children[i].children[0].value
         console.log(value)
         if (value == option) {
             return true
