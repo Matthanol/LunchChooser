@@ -21,7 +21,8 @@ function onReady(e) {
     document.getElementById('choose').addEventListener('click', createAnswerAndSpitOut);
     generateInMemoryList();
     applyVoteSetting()
-    
+    insertProposedLocations()
+
 
 }
 
@@ -133,27 +134,7 @@ function generateInMemoryList() {
         window.localStorage.setObj('memory', memory)
     }
     memory.options.forEach(option => {
-        const memoryItem = document.createElement('li');
-        const memoryText = document.createElement('span');
-        memoryText.innerText = option;
-
-        const memoryAddButton = document.createElement('input')
-        memoryAddButton.setAttribute('type', 'button')
-        memoryAddButton.setAttribute('data-option', option)
-        memoryAddButton.addEventListener('click', addToOptionList)
-        memoryAddButton.value = 'use'
-
-        const memoryRemoveButton = document.createElement('input')
-        memoryRemoveButton.setAttribute('type', 'button')
-        memoryRemoveButton.setAttribute('data-option', option)
-        memoryRemoveButton.addEventListener('click', removeFromMemoryList)
-        memoryRemoveButton.value = 'remove'
-
-        memoryItem.appendChild(memoryText);
-        memoryItem.appendChild(memoryAddButton);
-        memoryItem.appendChild(memoryRemoveButton)
-
-        memoryList.appendChild(memoryItem);
+        addMemoryItem(option);
     })
 
 }
@@ -171,12 +152,40 @@ function saveOption(option) {
 }
 
 function addToOptionList(e) {
-    if (isLastRowEmpty()) {
-        removeOptionRow(constIndex)
+    
+    if (!optionListContains(e.target.getAttribute('data-option'))) {
+        if (isLastRowEmpty()) {
+            removeOptionRow(constIndex)
+        }
+        createInputRowWithValue(e.target.getAttribute('data-option'))
     }
-    createInputRowWithValue(e.target.getAttribute('data-option'))
 
 
+}
+
+function addMemoryItem(option) {
+    const memoryList = document.getElementById('memoryList');
+    const memoryItem = document.createElement('li');
+    const memoryText = document.createElement('span');
+    memoryText.innerText = option;
+
+    const memoryAddButton = document.createElement('input')
+    memoryAddButton.setAttribute('type', 'button')
+    memoryAddButton.setAttribute('data-option', option)
+    memoryAddButton.addEventListener('click', addToOptionList)
+    memoryAddButton.value = 'use'
+
+    const memoryRemoveButton = document.createElement('input')
+    memoryRemoveButton.setAttribute('type', 'button')
+    memoryRemoveButton.setAttribute('data-option', option)
+    memoryRemoveButton.addEventListener('click', removeFromMemoryList)
+    memoryRemoveButton.value = 'remove'
+
+    memoryItem.appendChild(memoryText);
+    memoryItem.appendChild(memoryAddButton);
+    memoryItem.appendChild(memoryRemoveButton)
+
+    memoryList.appendChild(memoryItem);
 }
 
 function removeFromMemoryList(e) {
@@ -199,4 +208,17 @@ function removeOptionRow(i) {
 
 function isLastRowEmpty() {
     return document.getElementById(constIndex).value == ''
+}
+
+function optionListContains(option) {
+    for (let i = 0; i < options.length; i++) {
+        let value = options[i].childNodes[0].value
+        console.log(value)
+        if (value == option) {
+            return true
+        }
+
+
+    }
+    return false
 }
