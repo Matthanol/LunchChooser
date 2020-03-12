@@ -162,15 +162,13 @@ function saveOption(option) {
 }
 
 function addToOptionList(e) {
-
     if (!optionListContains(e.target.getAttribute('data-option'))) {
-        if (isLastRowEmpty()) {
-            removeOptionRow(options.children[options.children.length - 1].id)
+        if (checkEmptyRow() >= 0) {
+            options.children[checkEmptyRow()].children[0].value = e.target.getAttribute('data-option');
+        } else {
+            createInputRowWithValue(e.target.getAttribute('data-option'));
         }
-        createInputRowWithValue(e.target.getAttribute('data-option'))
     }
-
-
 }
 
 function addMemoryItem(option) {
@@ -221,6 +219,16 @@ function removeOptionRowEventListener(e) {
     if (options.children.length == 0) {
         createInputRow()
     }
+}
+
+function checkEmptyRow() {
+    for (let i = 0; i < options.children.length; i++){
+        if (options.children[i].children[0].value == ''){
+            return i;
+        }
+    }
+
+    return -1;
 }
 
 function isLastRowEmpty() {
