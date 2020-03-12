@@ -16,6 +16,7 @@ let memory = window.localStorage.getObj('memory');
 function onReady(e) {
     createInputRow();
     createInputRow();
+    options.children[0].children[0].focus();
     let votesCheckbox = document.getElementById('useVotes');
     votesCheckbox.checked = withVotes;
     votesCheckbox.addEventListener('click', toggleVotes);
@@ -23,8 +24,6 @@ function onReady(e) {
     generateInMemoryList();
     applyVoteSetting();
     document.getElementById('addRow').addEventListener('click', createInputRow)
-
-
 }
 
 function createInputRowWithValue(option) {
