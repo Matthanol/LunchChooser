@@ -109,10 +109,11 @@ function applyVoteSetting() {
 function createAnswerAndSpitOut() {
     let weightedList = [];
     let emptyOptions = false;
+
     Array.from(options.children).forEach(element => {
         const optionText = element.children[0].value;
         const wheight = element.children[1].value;
-        if (optionText) {
+        if (optionText && options.children.length > 1) {
             saveOption(optionText);
             for (let i = 0; i < wheight; i++) {
                 weightedList.push(optionText)
@@ -124,7 +125,9 @@ function createAnswerAndSpitOut() {
     //console.log(weightedList)
 
     if(emptyOptions){
-        document.getElementById('output').innerText = 'Please provide some options'
+        document.getElementById('output').innerText = 'Please provide some options';
+        document.getElementById('outputSentence').classList.add('hidden');
+
     } else {
         document.getElementById('output').innerText = weightedList[Math.floor(Math.random() * weightedList.length)];
         document.getElementById('outputSentence').classList.remove('hidden');
