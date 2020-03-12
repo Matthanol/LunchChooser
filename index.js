@@ -21,7 +21,6 @@ function onReady(e) {
     document.getElementById('choose').addEventListener('click', createAnswerAndSpitOut);
     generateInMemoryList();
     applyVoteSetting()
-    insertProposedLocations()
 
 
 }
