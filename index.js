@@ -162,8 +162,8 @@ function saveOption(option) {
 
 function addToOptionList(e) {
     if (!optionListContains(e.target.getAttribute('data-option'))) {
-        if (checkEmptyRow() >= 0) {
-            options.children[checkEmptyRow()].children[0].value = e.target.getAttribute('data-option');
+        if (findEmptyOptionRow() >= 0) {
+            options.children[findEmptyOptionRow()].children[0].value = e.target.getAttribute('data-option');
         } else {
             createInputRowWithValue(e.target.getAttribute('data-option'));
         }
@@ -220,7 +220,7 @@ function removeOptionRowEventListener(e) {
     }
 }
 
-function checkEmptyRow() {
+function findEmptyOptionRow() {
     for (let i = 0; i < options.children.length; i++){
         if (options.children[i].children[0].value == ''){
             return i;
